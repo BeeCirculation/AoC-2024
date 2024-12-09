@@ -32,7 +32,7 @@ def find_last_file_block(disk):
     return None
 
 
-def defrag(disk):
+def reorder(disk):
     file_block = find_last_file_block(disk)
     empty = disk.index(None)
 
@@ -54,7 +54,7 @@ disk_map = parse("input")
 #disk_map = parse("test")
 
 decompressed = decompress(disk_map)
-defrag(decompressed)
+reorder(decompressed)
 sum = checksum(decompressed)
 print(sum)
 
