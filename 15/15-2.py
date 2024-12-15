@@ -206,7 +206,9 @@ def check_move(grid, pos: Vector, direction: Vector):
         # AND the objects in front of it's other side
         if not check_move(grid, new_coord, direction):
             return False
-        if not check_move(grid, new_coord + directions[">"], direction):
+        if (direction != directions["<"]
+                and direction != directions[">"]
+                and not check_move(grid, new_coord + directions[">"], direction)):
             return False
 
         # grid[new_coord[0]][new_coord[1]] = grid[pos[0]][pos[1]]
@@ -215,7 +217,9 @@ def check_move(grid, pos: Vector, direction: Vector):
     if new_space == "]":
         if not check_move(grid, new_coord, direction):
             return False
-        if not check_move(grid, new_coord + directions["<"], direction):
+        if (direction != directions["<"]
+                and direction != directions[">"]
+                and not check_move(grid, new_coord + directions["<"], direction)):
             return False
 
         # grid[new_coord[0]][new_coord[1]] = grid[pos[0]][pos[1]]
@@ -254,7 +258,9 @@ def do_move(grid, pos: Vector, direction: Vector):
     if new_space == "[":
         # We must move everything in front AND the objects to the right
         do_move(grid, new_coord, direction)
-        do_move(grid, new_coord + directions[">"], direction)
+        if (direction != directions["<"]
+            and direction != directions[">"]):
+            do_move(grid, new_coord + directions[">"], direction)
 
         grid[new_coord[0]][new_coord[1]] = grid[pos[0]][pos[1]]
         grid[pos[0]][pos[1]] = "."
@@ -262,7 +268,9 @@ def do_move(grid, pos: Vector, direction: Vector):
     if new_space == "]":
         # We must move everything in front AND the objects to the left
         do_move(grid, new_coord, direction)
-        do_move(grid, new_coord + directions["<"], direction)
+        if (direction != directions["<"]
+            and direction != directions[">"]):
+            do_move(grid, new_coord + directions["<"], direction)
 
         grid[new_coord[0]][new_coord[1]] = grid[pos[0]][pos[1]]
         grid[pos[0]][pos[1]] = "."
@@ -295,7 +303,7 @@ def find_boxes(grid):
 
 
 def main():
-    warehouse, moves = parse("test_small")
+    warehouse, moves = parse("test_big")
     robot = find_robot(warehouse)
 
     print("\n".join(["".join(line) for line in warehouse]))
