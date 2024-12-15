@@ -185,8 +185,34 @@ def try_move(grid, pos: Vector, direction: Vector):
         grid[pos[0]][pos[1]] = "."
         return True
 
+
+def find_all(line: str, substr: str):
+    if line == "" or substr == "":
+        raise ValueError
+
+    indices = []
+    index = -len(substr)
+    while index is not None:
+        index = line.find(substr, index + len(substr))
+        if index == -1:
+            break
+        indices.append(index)
+    return indices
+        
+
+def find_boxes(grid):
+    locations = []
+    for i, line in enumerate(grid):
+        line = "".join(line)
+        horiz = find_all(line, "O")
+        for num in horiz:
+            locations.append(i * 100 + num)
+    return locations
+
+
+
 def main():
-    warehouse, moves = parse("test_small")
+    warehouse, moves = parse("input")
     robot = find_robot(warehouse)
 
     print("\n".join(["".join(line) for line in warehouse]))
@@ -199,5 +225,7 @@ def main():
             robot += direction
         print("\n".join(["".join(line) for line in warehouse]))
         print()
+
+    print(sum(find_boxes(warehouse)))
 
 main()
