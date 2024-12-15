@@ -303,7 +303,7 @@ def find_boxes(grid):
 
 
 def main():
-    warehouse, moves = parse("test_big")
+    warehouse, moves = parse("input")
     robot = find_robot(warehouse)
 
     print("\n".join(["".join(line) for line in warehouse]))
