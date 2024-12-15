@@ -147,6 +147,20 @@ def find_robot(grid: list[list[str]]):
 
 
 def try_move(grid, pos: Vector, direction: Vector):
+    """
+    Will attempt to move an object and all objects infront of it if possible
+    Modifies the grid variable
+
+    Args:
+        grid (list[list[str]]): The grid in which the objects exist
+        pos: The position in the grid being moved from
+        direction: The direction being moved in
+
+    Returns (bool):
+        True: If the move was possible. (And modifies grid)
+        False: If the move was not possible. (Does not modify grid)
+
+    """
     new_coord = pos + direction
     try:
         new_space = grid[new_coord[0]][new_coord[1]]
@@ -178,4 +192,3 @@ def main():
 
         if try_move(warehouse, robot, direction):
             robot += direction
-
