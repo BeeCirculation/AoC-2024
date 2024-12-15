@@ -141,9 +141,11 @@ directions = {"^": Vector([-1, 0]),
 
 def find_robot(grid: list[list[str]]):
     for i, line in enumerate(grid):
-        if line.index("@") != -1:
+        try:
             return Vector([i, line.index("@")])
-    raise ValueError("Couldnt find robot in grid")
+        except ValueError:
+            pass
+    raise ValueError("Couldnt find @ in grid")
 
 
 def try_move(grid, pos: Vector, direction: Vector):
@@ -175,7 +177,7 @@ def try_move(grid, pos: Vector, direction: Vector):
         grid[pos[0]][pos[1]] = "."
         return True
 
-    if new_space == "o":
+    if new_space == "O":
         if not try_move(grid, new_coord, direction):
             return False
 
@@ -187,8 +189,15 @@ def main():
     warehouse, moves = parse("test_small")
     robot = find_robot(warehouse)
 
+    print("\n".join(["".join(line) for line in warehouse]))
+    print()
     for move in moves:
         direction = directions[move]
+        print(move)
 
         if try_move(warehouse, robot, direction):
             robot += direction
+        print("\n".join(["".join(line) for line in warehouse]))
+        print()
+
+main()
