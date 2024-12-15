@@ -296,7 +296,7 @@ def find_boxes(grid):
     locations = []
     for i, line in enumerate(grid):
         line = "".join(line)
-        horiz = find_all(line, "O")
+        horiz = find_all(line, "[")
         for num in horiz:
             locations.append(i * 100 + num)
     return locations
