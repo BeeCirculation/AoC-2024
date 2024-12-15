@@ -72,6 +72,7 @@ class Vector:
         else:
             raise TypeError
 
+
     def __mod__(self, other):
         if isinstance(other, int):
             other = Vector([other] * self.dimension)
@@ -141,7 +142,40 @@ directions = {"^": Vector([-1, 0]),
 def find_robot(grid: list[list[str]]):
     for i, line in enumerate(grid):
         if line.index("@") != -1:
-            return i, line.index("@")
+            return Vector([i, line.index("@")])
     raise ValueError("Couldnt find robot in grid")
 
+
+def try_move(grid, pos: Vector, direction: Vector):
+    new_coord = pos + direction
+    try:
+        new_space = grid[new_coord[0]][new_coord[1]]
+    except IndexError:
+        return False
+
+    if new_space == "#":
+        return False
+
+    if new_space == ".":
+        grid[new_coord[0]][new_coord[1]] = grid[pos[0]][pos[1]]
+        grid[pos[0]][pos[1]] = "."
+        return True
+
+    if new_space == "o":
+        if not try_move(grid, new_coord, direction):
+            return False
+
+        grid[new_coord[0]][new_coord[1]] = grid[pos[0]][pos[1]]
+        grid[pos[0]][pos[1]] = "."
+        return True
+
+def main():
+    warehouse, moves = parse("test_small")
+    robot = find_robot(warehouse)
+
+    for move in moves:
+        direction = directions[move]
+
+        if try_move(warehouse, robot, direction):
+            robot += direction
 
