@@ -1,5 +1,3 @@
-import math
-
 from MyVector import Vector, rotate2D
 
 def parse(fp):
@@ -22,30 +20,22 @@ def find_start_end(grid):
 
     return Vector(start), Vector(end)
 
-class Reindeer:
-    def __init__(self, pos: Vector, direction:Vector):
-        self.pos = pos
-        self.direction = direction
 
-    @property
-    def right_dir(self):
-        return rotate2D(self.direction, -0.5 * math.pi)
+directions = {Vector.UP, Vector.DOWN, Vector.RIGHT, Vector.LEFT}
+directions = [direction.change_dimension(2) for direction in directions]
 
-    @property
-    def left_dir(self):
-        return rotate2D(self.direction, 0.5 * math.pi)
+def find_adjacent(pos: Vector, grid: list[list[str]]) -> list[Vector]:
+    if grid[pos.y][pos.x] != ".":
+        raise ValueError
 
-    def turn_right(self):
-        self.direction.rotate2D(-0.5 * math.pi)
+    adj = []
+    for direction in directions:
+        new_pos = pos + direction
+        if grid[new_pos.y][new_pos.x] == ".":
+            adj.append(new_pos)
 
-    def turn_left(self):
-        self.direction.rotate2D(0.5 * math.pi)
-
-def get_score(pos: Vector):
-    directions = {Vector.RIGHT, Vector.LEFT, Vector.UP, Vector.DOWN}
-    directions = {direction.change_dimension(2) for direction in directions}
-
-    
+    return adj
 
 
-
+maze = parse("test")
+start, end = find_start_end(maze)
