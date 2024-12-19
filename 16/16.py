@@ -1,4 +1,6 @@
-from MyVector import Vector, rotate2D
+from MyVector import Vector
+import MyVector
+from MyGraph import dijkstra_all
 
 def parse(fp):
     with open(fp, "r") as file:
@@ -10,32 +12,45 @@ def find_start_end(grid):
 
     for i, line in enumerate(grid):
         try:
-            start = line.index("S"), i
-            end = line.index("E"), i
-        except IndexError:
+            start = i, line.index("S")
+        except ValueError:
+            pass
+        try:
+            end = i, line.index("E")
+        except ValueError:
             pass
 
     if start is None or end is None:
-        raise IndexError("Couldnt find start or end")
+        raise ValueError("Couldnt find start or end")
 
     return Vector(start), Vector(end)
 
 
-directions = {Vector.UP, Vector.DOWN, Vector.RIGHT, Vector.LEFT}
-directions = [direction.change_dimension(2) for direction in directions]
-
-def find_adjacent(pos: Vector, grid: list[list[str]]) -> list[Vector]:
-    if grid[pos.y][pos.x] != ".":
-        raise ValueError
-
-    adj = []
-    for direction in directions:
-        new_pos = pos + direction
-        if grid[new_pos.y][new_pos.x] == ".":
-            adj.append(new_pos)
-
-    return adj
+directions = [Vector([0, 1]), Vector([1, 0]), Vector([0, -1]), Vector([-1, 0])]
 
 
-maze = parse("test")
+maze = parse("input")
+'''
+maze = ["#######",
+        "#....E#",
+        "##.#.##",
+        "#S....#",
+        "#######"]
+'''
+
 start, end = find_start_end(maze)
+
+def adj(vertex):
+    coord, direction = vertex
+    yield (coord, (direction + 1) % 4), 1000
+    yield (coord, (direction - 1) % 4), 1000
+    y, x = coord + directions[direction]
+    if maze[int(y)][int(x)] != "#":
+        yield (coord + directions[direction], direction), 1
+
+distance, paths = dijkstra_all((start, 0), adj, None, lambda c, v: c[0] == end)
+paths = [[pos for pos, dirc in path] for path in paths]
+out = set()
+for path in paths:
+    out.update(set(path))
+print(len(out))
