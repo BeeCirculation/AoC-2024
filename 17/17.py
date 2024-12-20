@@ -7,7 +7,7 @@ def parse(fp):
         program = [int(o) for o in program.split(": ")[1].split(",")]
     return a, b, c, program
 
-A, B, C, program = parse("test2")
+A, B, C, program = parse("input")
 IC = 0
 output = []
 
@@ -89,6 +89,11 @@ def run_program(prog):
         operand = prog[IC+1]
         step = operation(operand)
         IC += step
+
+        # Part 2 optimisation
+        # Check each new value of output, if it doesnt match its corresponding value in prog then stop this program
+        if len(output) > 0 and output[-1] != prog[len(output) - 1]:
+            break
         #print(f"{IC}: A={operands[4]}, B={operands[5]}, C={operands[6]}, out={output}")
         #input()
     IC = 0
