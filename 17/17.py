@@ -20,47 +20,56 @@ operands = {0: 0,
             6: C,
             7: None}
 
+
+def write(func):
+    def wrapper(*args):
+        print(func.__name__, *args)
+        return func(*args)
+    return wrapper
+
+
+@write
 def adv(op):
-    global A
-    A = A / pow(2, operands[op])
+    operands[4] = operands[4] // pow(2, operands[op])
     return 2
 
+@write
 def bxl(op):
-    global B
-    B = B ^ op
+    operands[5] = operands[5] ^ op
     return 2
 
+@write
 def bst(op):
-    global B
-    B = operands[op] % 8
+    operands[5] = operands[op] % 8
     return 2
 
+@write
 def jnz(op):
-    global A, IC
-    if A == 0:
+    global IC
+    if operands[4] == 0:
         return 2
 
     IC = op
     return 0
 
+@write
 def bxc(op):
-    global B, C
-    B = B ^ C
+    operands[5] = operands[5] ^ operands[6]
     return 2
 
+@write
 def out(op):
-    global output
     output.append(operands[op] % 8)
     return 2
 
+@write
 def bdv(op):
-    global B, A
-    B = A / pow(2, operands[op])
+    operands[5] = operands[4] // pow(2, operands[op])
     return 2
 
+@write
 def cdv(op):
-    global A, C
-    A = C / pow(2, operands[op])
+    operands[6] = operands[4] // pow(2, operands[op])
 
 opcodes = {0: adv,
            1: bxl,
@@ -70,3 +79,17 @@ opcodes = {0: adv,
            5: out,
            6: bdv,
            7: cdv}
+
+
+def run_program(prog):
+    global IC
+    while IC < len(prog):
+        operation = opcodes[prog[IC]]
+        operand = prog[IC+1]
+        step = operation(operand)
+        IC += step
+        print(f"{IC}: A={operands[4]}, B={operands[5]}, C={operands[6]}, out={output}")
+        #input()
+    return output
+
+print(run_program(program))
