@@ -83,7 +83,7 @@ opcodes = {0: adv,
 
 
 def run_program(prog):
-    global IC
+    global IC, output
     while IC < len(prog):
         operation = opcodes[prog[IC]]
         operand = prog[IC+1]
@@ -92,6 +92,8 @@ def run_program(prog):
         print(f"{IC}: A={operands[4]}, B={operands[5]}, C={operands[6]}, out={output}")
         #input()
     IC = 0
-    return output
+    out = output.copy()
+    output = []
+    return out
 
 print(",".join([str(o) for o in run_program(program)]))
