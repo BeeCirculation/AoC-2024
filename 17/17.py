@@ -7,7 +7,7 @@ def parse(fp):
         program = [int(o) for o in program.split(": ")[1].split(",")]
     return a, b, c, program
 
-A, B, C, program = parse("test")
+A, B, C, program = parse("input")
 IC = 0
 output = []
 
@@ -70,6 +70,7 @@ def bdv(op):
 @write
 def cdv(op):
     operands[6] = operands[4] // pow(2, operands[op])
+    return 2
 
 opcodes = {0: adv,
            1: bxl,
@@ -92,4 +93,4 @@ def run_program(prog):
         #input()
     return output
 
-print(run_program(program))
+print(",".join([str(o) for o in run_program(program)]))
