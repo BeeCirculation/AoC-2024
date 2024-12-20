@@ -23,7 +23,7 @@ operands = {0: 0,
 
 def write(func):
     def wrapper(*args):
-        #print(func.__name__, *args)
+        print(func.__name__, *args)
         return func(*args)
     return wrapper
 
@@ -90,21 +90,35 @@ def run_program(prog):
         step = operation(operand)
         IC += step
 
-        # Part 2 optimisation
-        # Check each new value of output, if it doesnt match its corresponding value in prog then stop this program
-        if len(output) > 0 and output[-1] != prog[len(output) - 1]:
-            break
-        #print(f"{IC}: A={operands[4]}, B={operands[5]}, C={operands[6]}, out={output}")
+        #print(f"{IC}: A={bin(operands[4])}, B={bin(operands[5])}, C={bin(operands[6])}, out={output}")
         #input()
     IC = 0
     out = output.copy()
     output = []
     return out
 
-start = 0
-while run_program(program) != program:
-    start += 1
-    operands[4] = start
-    operands[5] = B
-    operands[6] = C
-    print(start)
+
+def octal_digits(num):
+    return len(oct(num)[2:])
+
+
+def find_a(a, view):
+    if len(view) == 0:
+        return a
+    target = oct(117440)
+    for i in range(8):
+        new_a = (a << 3) + i
+        a_o = oct(new_a)
+        digits = octal_digits(new_a)
+
+        operands[4] = new_a
+        operands[5] = 0
+        operands[6] = 0
+
+        out = run_program(program)
+        if out[0] == view[-1]:
+            o = find_a(new_a, view[:-1])
+            if o is not None:
+                return o
+
+print(find_a(0, program))
