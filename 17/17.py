@@ -91,6 +91,7 @@ def run_program(prog):
         IC += step
         print(f"{IC}: A={operands[4]}, B={operands[5]}, C={operands[6]}, out={output}")
         #input()
+    IC = 0
     return output
 
 print(",".join([str(o) for o in run_program(program)]))
