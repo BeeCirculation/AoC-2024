@@ -7,7 +7,7 @@ def parse(fp):
         program = [int(o) for o in program.split(": ")[1].split(",")]
     return a, b, c, program
 
-A, B, C, program = parse("input")
+A, B, C, program = parse("test2")
 IC = 0
 output = []
 
@@ -23,7 +23,7 @@ operands = {0: 0,
 
 def write(func):
     def wrapper(*args):
-        print(func.__name__, *args)
+        #print(func.__name__, *args)
         return func(*args)
     return wrapper
 
@@ -83,17 +83,23 @@ opcodes = {0: adv,
 
 
 def run_program(prog):
-    global IC, output
+    global IC, output, start
     while IC < len(prog):
         operation = opcodes[prog[IC]]
         operand = prog[IC+1]
         step = operation(operand)
         IC += step
-        print(f"{IC}: A={operands[4]}, B={operands[5]}, C={operands[6]}, out={output}")
+        #print(f"{IC}: A={operands[4]}, B={operands[5]}, C={operands[6]}, out={output}")
         #input()
     IC = 0
     out = output.copy()
     output = []
     return out
 
-print(",".join([str(o) for o in run_program(program)]))
+start = 0
+while run_program(program) != program:
+    start += 1
+    operands[4] = start
+    operands[5] = B
+    operands[6] = C
+    print(start)
