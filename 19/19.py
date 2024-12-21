@@ -11,7 +11,7 @@ def parse(fp):
 
 
 towels, patterns = parse("input")
-
+longest = max(map(len, towels))
 
 def find_towels(towels: list[str], pattern: str) -> list[str] | None:
     for towel in towels:
@@ -27,11 +27,11 @@ def find_towels(towels: list[str], pattern: str) -> list[str] | None:
 
 
 def get_arrangements(patterns: list[str]) -> list[str]:
-    out = []
+    total =0
     for i, pattern in enumerate(patterns):
         print(f"{i}/{len(patterns)}")
-        out.append(find_all_towels(pattern))
-    return out
+        total += count_all_towels(pattern)
+    return total
 
 
 @cache
@@ -49,9 +49,17 @@ def find_all_towels(pattern: str) -> tuple[tuple[str]] | None:
     return tuple(o)
 
 
-arrangements = get_arrangements(patterns)
-total = 0
-for arrangement in arrangements:
-    total += len(arrangement)
-    print(arrangement)
-print(total)
+@cache
+def count_all_towels(pattern: str) -> int:
+    if pattern == "":
+        return 1
+
+    arrangements = 0
+    for i in range(min(len(pattern), longest)):
+        substr = pattern[:i+1]
+        if substr in towels:
+            arrangements += count_all_towels(pattern[i+1:])
+    return arrangements
+
+
+print(get_arrangements(patterns))
