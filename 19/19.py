@@ -20,7 +20,7 @@ def find_towels(towels: list[str], pattern: str) -> list[str] | None:
     return None
 
 
-def get_all_towels(towels: list[str], patterns: list[str]) -> list[str]:
+def get_arrangement(towels: list[str], patterns: list[str]) -> list[str]:
     out = []
     for pattern in patterns:
         out.append(find_towels(towels, pattern))
@@ -28,4 +28,4 @@ def get_all_towels(towels: list[str], patterns: list[str]) -> list[str]:
 
 
 towels, patterns = parse("input")
-print(len([a for a in get_all_towels(towels, patterns) if a]))
+print(len([a for a in get_arrangement(towels, patterns) if a]))
