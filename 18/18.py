@@ -1,10 +1,12 @@
+from copy import deepcopy
+
 import MyVector
 from MyVector import Vector, Grid, UP, DOWN, LEFT, RIGHT
 from MyGraph import dijkstra, get_branches
 import sys
 
 
-dimension = 7
+dimension = 71
 
 
 def q2g(x: Vector):
@@ -36,10 +38,9 @@ def parse(fp):
         return [q2g(Vector(line.split(","))) for line in file.readlines()]
 
 
+wall_char = "▦"
+bytes = parse("input")
 grid = Grid(dimension, dimension, ".")
-bytes = parse("test")
-for byte in bytes[:12]:
-    grid[byte] = "#"
 
 
 def adj2(vertex, distances):
@@ -56,7 +57,7 @@ def adj(vertex, distances):
     directions = [d.change_dimension(2) for d in directions]
     for direction in directions:
         new_pos = vertex + direction
-        if grid.in_grid(new_pos) and grid[new_pos] != "#":
+        if grid.in_grid(new_pos) and grid[new_pos] != wall_char:
             yield new_pos, 1
 
 
@@ -67,16 +68,43 @@ def vis(current: Vector, dists, visited, q):
     for vert in visited:
         grid[vert] = "○"
 
-    for vert in get_branches(current, lambda n: [dists[n][1]] if dists[n][1] else None)[0]:
+    verts = set()
+    for branch in get_branches(current, lambda n: [dists[n][1]] if dists[n][1] else None):
+        verts.update(set(branch))
+
+    for vert in verts:
         grid[vert] = "●"
 
     grid[current] = "◈"
 
-    sys.stdout.write(f"\033[{grid.height + 1}A") # Move up
+    sys.stdout.write(f"\033[{grid.height}A") # Move up
     sys.stdout.write(str(grid))
-    #input()
+    #input("\033[1A")
 
-for _ in range(grid.height + 1):
-    print()
-steps, path = dijkstra(g2q(Vector(0,0)), adj, g2q(Vector(dimension - 1, dimension - 1)), visualiser=vis)
-print(steps)
+
+print(grid, end="")
+input("\033[1A")
+grid_base = deepcopy(grid)
+
+i = 1
+steps = 0
+while i:
+    print(i, str(steps))
+    print(" " * 100, end="\r") # clear line
+    try:
+        i = int(input("> "))
+    except ValueError:
+        break
+    print("", end="\033[2A")
+    print(" " * 100, end="\r")
+
+    for k in range(i):
+        byte = bytes[k]
+        grid[byte] = wall_char
+
+    steps, path = dijkstra(source=g2q(Vector(0,0)),
+                           get_adjacent=adj,
+                           target=g2q(Vector(dimension - 1, dimension - 1)),
+                           visualiser=vis)
+    grid = deepcopy(grid_base)
+print(g2q(bytes[i - 1]))
