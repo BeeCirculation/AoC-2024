@@ -7,7 +7,7 @@ def parse(fp):
 
     towels = towels.split(", ")
     patterns = patterns.split("\n")
-    return set(towels), patterns[:-1]
+    return (towels), patterns[:-1]
 
 
 towels, patterns = parse("input")
