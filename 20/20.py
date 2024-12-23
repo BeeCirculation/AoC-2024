@@ -25,7 +25,7 @@ def adj2(current, distances):
             yield current + d, 1
 
 
-track_base = parse("test")
+track_base = parse("input")
 print(track_base)
 s = track_base.find("S")[0]
 e = track_base.find("E")[0]
@@ -38,13 +38,6 @@ def vis(current, distances, visited, q):
         track_vis[a] = "⚬"
 
     for a in visited:
-        track_vis[a] = "○"
-
-    def get_children(node):
-        return [distances[node][1]] if distances[node][1] else None
-
-    path_to_current = get_branches(current, get_children)
-    for a in path_to_current[0]:
         track_vis[a] = "●"
 
     track_vis[current] = "❖"
@@ -52,14 +45,15 @@ def vis(current, distances, visited, q):
     print(f"\033[{track_vis.height + 1}A" + str(track_vis))
     #input("\033[1A")
 
-
 length, path = dijkstra(s, adj, e, visualiser=vis)
-CHEAT_LEN = 2
-LIMIT = 0
+
+CHEAT_LEN = 20
+LIMIT = 100
 
 cheats = {}
 saves = {}
-for dist, spot in enumerate(path):
+path = {spot: i for i, spot in enumerate(path)}
+for spot, dist in path.items():
     start_spot = spot.__deepcopy__()
 
     # Find the diamond of all possible end positions
@@ -70,6 +64,7 @@ for dist, spot in enumerate(path):
             end_positions.update({Vector(x, -y) + start_spot: x + y})
             end_positions.update({Vector(-x, y) + start_spot: x + y})
             end_positions.update({Vector(-x, -y) + start_spot: x + y})
+            print(dist/len(path), (x*CHEAT_LEN + y) / 400, end="\r")
 
     for next_spot, cheat_dist in end_positions.items():
         if not track_base.in_grid(next_spot):
@@ -84,13 +79,6 @@ for dist, spot in enumerate(path):
                 track_vis[a] = "⚬"
 
             for a in visited:
-                track_vis[a] = "○"
-
-            def get_children(node):
-                return [distances[node][1]] if distances[node][1] else None
-
-            path_to_current = get_branches(current, get_children)
-            for a in path_to_current[0]:
                 track_vis[a] = "●"
 
             track_vis[current] = "❖"
@@ -101,10 +89,14 @@ for dist, spot in enumerate(path):
             print(f"\033[{track_vis.height + 1}A" + str(track_vis))
             #input("\033[1A")
 
-        remaining_dist, _ = dijkstra(next_spot, adj, e, visualiser=vis2)
+        if next_spot in path:
+            remaining_dist = length - path[next_spot]
+        else:
+            remaining_dist, _ = dijkstra(next_spot, adj, e, visualiser=None)
+        #input("\033[1A")
         if remaining_dist is not None:
             saved = length - (dist + cheat_dist + remaining_dist)
-            if saved > LIMIT:
+            if saved >= LIMIT:
                 cheats.update({(spot, next_spot): saved})
         #input("\033[1A")
 
@@ -113,5 +105,6 @@ for cheat, save in cheats.items():
         saves[save] += 1
     else:
         saves[save] = 1
+print()
 print(saves)
-
+print(sum(saves.values()))
