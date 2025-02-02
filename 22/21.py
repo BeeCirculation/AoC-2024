@@ -1,3 +1,12 @@
+import sys
+
+def progress_bar(progress, total, length=40):
+    percent = progress / total
+    bar = "#" * int(percent * length) + "-" * (length - int(percent * length))
+    sys.stdout.write(f"\r[{bar}] {percent*100:.2f}%")
+    sys.stdout.flush()
+
+
 def mix_prune(secret, value):
     secret =  secret ^ value
     return secret % 16777216
@@ -8,7 +17,7 @@ def find_next(secret):
     secret = mix_prune(secret, value)
     value = secret >> 5    # secret // 32
     secret = mix_prune(secret, value)
-    value = secret << 11    # secret * 2048
+    value = secret << 11   # secret * 2048
     secret = mix_prune(secret, value)
     return secret
 
@@ -22,12 +31,25 @@ def parse(fp):
 buyers = [1, 10, 100, 2024]
 buyers = parse("input")
 
-last_nums = []
+# Generate all the sequences of 2001 prices
+sequences = []
+changes = []
 for buyer in buyers:
     number = buyer
+    sequence = [number]
     for _ in range(2000):
         number = find_next(number)
-    last_nums.append(number)
+        sequence.append(number % 10)    # Get the least significant digit
+    sequences.append(sequence)
 
-print(sum(last_nums))
+    # Generate lists of all 2000 changes
+    change = []
+    for i in range(len(sequence) - 1):
+        change.append(sequence[i+1] - sequence[i])
+    changes.append(changes)
+
+print(len(buyers))
+
+
+
 
