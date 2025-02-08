@@ -37,8 +37,30 @@ def generate_adj_matrix(edges: list[tuple], verts: list) -> dict[any, dict[any, 
     return matrix
 
 
+def adjacent(vertex, edges):
+    relevant_edges = [edge for edge in edges if vertex in edge]
+    return set([a if a != vertex else b for a, b in relevant_edges])
+
+
+def bron_kerbosch(R: set, P: set, X: set, edges: list[tuple]):
+    if not P and not X:
+        print(R)
+        return
+
+    # Find the optimal pivot; the vertex with the most neighbours
+    pivot = list(P)[0]
+    for u in P.union(X):
+        if len(adjacent(u, edges)) > len(adjacent(pivot, edges)):
+            pivot = u
+
+    for v in P - adjacent(pivot, edges):
+        bron_kerbosch(R.union({v}), P.intersection(adjacent(v, edges)), X.intersection(adjacent(v, edges)), edges)
+        P = P - {v}
+        X.add(v)
+
+
 connections = parse("input")
-#connections = parse("test")
+connections = parse("test")
 
 vertices = set([c[0] for c in connections] + [c[1] for c in connections])
 
