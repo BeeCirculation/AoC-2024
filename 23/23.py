@@ -62,32 +62,36 @@ def bron_kerbosch(R: set, P: set, X: set, edges: list[tuple]):
 connections = parse("input")
 connections = parse("test")
 
-vertices = set([c[0] for c in connections] + [c[1] for c in connections])
+def part1():
+    vertices = set([c[0] for c in connections] + [c[1] for c in connections])
 
-# For all possible subsets, check if all elements are adjacent to eachother
-subsets = combinations(vertices, 3)
-adj_matrix = generate_adj_matrix(connections, vertices)
+    # For all possible subsets, check if all elements are adjacent to eachother
+    subsets = combinations(vertices, 3)
+    adj_matrix = generate_adj_matrix(connections, vertices)
 
-cliques = []
-for subset in subsets:
-    pairs = combinations(subset, 2)
-    clique = True
-    for a, b in pairs:
-        if adj_matrix[a][b] != 1:
-            clique = False
-    if clique:
-        cliques.append(subset)
+    cliques = []
+    for subset in subsets:
+        pairs = combinations(subset, 2)
+        clique = True
+        for a, b in pairs:
+            if adj_matrix[a][b] != 1:
+                clique = False
+        if clique:
+            cliques.append(subset)
 
-valid_cliques = []
-for clique in cliques:
-    contains_t = False
-    for computer in clique:
-        if computer[0] == "t":
-            contains_t = True
-            break
-    if contains_t:
-        valid_cliques.append(clique)
+    valid_cliques = []
+    for clique in cliques:
+        contains_t = False
+        for computer in clique:
+            if computer[0] == "t":
+                contains_t = True
+                break
+        if contains_t:
+            valid_cliques.append(clique)
 
-print(len(valid_cliques))
-for valid_clique in valid_cliques:
-    print(valid_clique)
+    print(len(valid_cliques))
+    for valid_clique in valid_cliques:
+        print(valid_clique)
+        
+def part2():
+    pass
