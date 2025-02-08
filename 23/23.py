@@ -42,29 +42,34 @@ def adjacent(vertex, edges):
     return set([a if a != vertex else b for a, b in relevant_edges])
 
 
-def bron_kerbosch(R: set, P: set, X: set, edges: list[tuple]):
+def bron_kerbosch(R: set, P: set, X: set, edges: list[tuple], max_clique):
     if not P and not X:
-        print(R)
+        # Find the maximum clique
+        if len(R) > len(max_clique[0]):
+            max_clique[0] = list(R)
         return
 
     # Find the optimal pivot; the vertex with the most neighbours
-    pivot = list(P)[0]
-    for u in P.union(X):
-        if len(adjacent(u, edges)) > len(adjacent(pivot, edges)):
-            pivot = u
+    if P:
+        pivot = list(P)[0]
+        for u in P.union(X):
+            if len(adjacent(u, edges)) > len(adjacent(pivot, edges)):
+                pivot = u
+        Nu = adjacent(pivot, edges)
+    else:
+        Nu = set()
 
-    for v in P - adjacent(pivot, edges):
-        bron_kerbosch(R.union({v}), P.intersection(adjacent(v, edges)), X.intersection(adjacent(v, edges)), edges)
+    for v in list(P - Nu):
+        bron_kerbosch(R.union({v}), P.intersection(adjacent(v, edges)), X.intersection(adjacent(v, edges)), edges, max_clique)
         P = P - {v}
         X.add(v)
 
 
 connections = parse("input")
-connections = parse("test")
+#connections = parse("test")
+vertices = set([c[0] for c in connections] + [c[1] for c in connections])
 
 def part1():
-    vertices = set([c[0] for c in connections] + [c[1] for c in connections])
-
     # For all possible subsets, check if all elements are adjacent to eachother
     subsets = combinations(vertices, 3)
     adj_matrix = generate_adj_matrix(connections, vertices)
@@ -92,6 +97,20 @@ def part1():
     print(len(valid_cliques))
     for valid_clique in valid_cliques:
         print(valid_clique)
-        
+
+
 def part2():
-    pass
+    R = set()
+    P = vertices
+    X = set()
+    clique = [[]]
+    bron_kerbosch(R, P, X, connections, clique)
+    clique = clique[0]
+
+    # find the password
+    clique = sorted(clique)
+    password = ",".join(clique)
+    print(password)
+
+
+part2()
