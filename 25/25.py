@@ -1,3 +1,6 @@
+from itertools import product
+
+
 def parse(fp: str) -> tuple[list[list[str]], list[list[str]]]:
     """
     Reads the input file and outputs the locks and keys
@@ -56,12 +59,37 @@ def convert_all(schematics: list[list[str]]) -> list[list[int]]:
     return converted_schematics
 
 
-locks, keys = parse("test")
+def try_lock(lock: list[int], key: list[int], depth: int = 5) -> bool:
+    """
+    Determines whether a key and lock combination fit together
+
+    Args:
+        lock: The lock to be tested
+        key: The key to be tested
+        depth: The depth of the lock; the length that the heights should add up to
+
+    Returns:
+        True: If they fit together
+        False: If they don't fit together
+    """
+    for l, k in zip(lock, key):
+        if l + k > 5:
+            return False
+    return True
+
+
+locks, keys = parse("input")
 locks = convert_all(locks)
 keys = convert_all(keys)
 
-print(locks)
-print(keys)
+working_pairs = []
+for lock, key in product(locks, keys):
+    if try_lock(lock, key):
+        working_pairs.append((lock, key))
+        print(lock, key)
+
+print(len(working_pairs))
+
 
 
 
